@@ -47,9 +47,9 @@ class CameraData:
             if nameHome not in self.types:
                 self.types[nameHome] = dict()
             if self.home:
-                for p in self.rawData[self.home][i]['persons']:
+                for p in self.rawData['homes'][self.home]['persons']:
                     self.persons[p['id']] = p
-                for e in self.rawData[self.home][i]['events']:
+                for e in self.rawData['homes'][self.home]['events']:
                     if e['type'] == 'outdoor':
                         if e['camera_id'] not in self.outdoor_events:
                             self.outdoor_events[e['camera_id']] = dict()
@@ -58,13 +58,13 @@ class CameraData:
                         if e['camera_id'] not in self.events:
                             self.events[e['camera_id']] = dict()
                         self.events[e['camera_id']][e['time']] = e
-                for c in self.rawData[self.home][i]['cameras']:
+                for c in self.rawData['homes'][self.home]['cameras']:
                     self.cameras[nameHome][c['id']] = c
                     if c['type'] == 'NACamera' and 'modules' in c :
                         for m in c['modules']:
                             self.modules[m['id']] = m
                             self.modules[m['id']]['cam_id'] = c['id']
-                for t in self.rawData[self.home][i]['cameras']:
+                for t in self.rawData['homes'][self.home]['cameras']:
                     self.types[nameHome][t['type']] = t
             else:
                 for p in self.rawData['homes'][i]['persons']:
