@@ -20,7 +20,7 @@ class CameraData:
         authData (ClientAuth):
             Authentication information with a working access Token
     """
-    def __init__(self, authData, size=15):
+    def __init__(self, authData, size=15, home=None):
         self.getAuthToken = authData.accessToken
         postParams = {
             "access_token": self.getAuthToken,
@@ -31,6 +31,7 @@ class CameraData:
         self.homes = {d['id']: d for d in self.rawData['homes']}
         if not self.homes:
             raise NoDevice("No camera available")
+        self.home = home
         self.persons = dict()
         self.events = dict()
         self.outdoor_events = dict()
@@ -45,25 +46,46 @@ class CameraData:
                 self.cameras[nameHome] = dict()
             if nameHome not in self.types:
                 self.types[nameHome] = dict()
-            for p in self.rawData['homes'][i]['persons']:
-                self.persons[p['id']] = p
-            for e in self.rawData['homes'][i]['events']:
-                if e['type'] == 'outdoor':
-                    if e['camera_id'] not in self.outdoor_events:
-                        self.outdoor_events[e['camera_id']] = dict()
-                    self.outdoor_events[e['camera_id']][e['time']] = e
-                elif e['type'] != 'outdoor':
-                    if e['camera_id'] not in self.events:
-                        self.events[e['camera_id']] = dict()
-                    self.events[e['camera_id']][e['time']] = e
-            for c in self.rawData['homes'][i]['cameras']:
-                self.cameras[nameHome][c['id']] = c
-                if c['type'] == 'NACamera' and 'modules' in c :
-                    for m in c['modules']:
-                        self.modules[m['id']] = m
-                        self.modules[m['id']]['cam_id'] = c['id']
-            for t in self.rawData['homes'][i]['cameras']:
-                self.types[nameHome][t['type']] = t
+            if self.home:
+                for p in self.rawData[self.home][i]['persons']:
+                    self.persons[p['id']] = p
+                for e in self.rawData[self.home][i]['events']:
+                    if e['type'] == 'outdoor':
+                        if e['camera_id'] not in self.outdoor_events:
+                            self.outdoor_events[e['camera_id']] = dict()
+                        self.outdoor_events[e['camera_id']][e['time']] = e
+                    elif e['type'] != 'outdoor':
+                        if e['camera_id'] not in self.events:
+                            self.events[e['camera_id']] = dict()
+                        self.events[e['camera_id']][e['time']] = e
+                for c in self.rawData[self.home][i]['cameras']:
+                    self.cameras[nameHome][c['id']] = c
+                    if c['type'] == 'NACamera' and 'modules' in c :
+                        for m in c['modules']:
+                            self.modules[m['id']] = m
+                            self.modules[m['id']]['cam_id'] = c['id']
+                for t in self.rawData[self.home][i]['cameras']:
+                    self.types[nameHome][t['type']] = t
+            else:
+                for p in self.rawData['homes'][i]['persons']:
+                    self.persons[p['id']] = p
+                for e in self.rawData['homes'][i]['events']:
+                    if e['type'] == 'outdoor':
+                        if e['camera_id'] not in self.outdoor_events:
+                            self.outdoor_events[e['camera_id']] = dict()
+                        self.outdoor_events[e['camera_id']][e['time']] = e
+                    elif e['type'] != 'outdoor':
+                        if e['camera_id'] not in self.events:
+                            self.events[e['camera_id']] = dict()
+                        self.events[e['camera_id']][e['time']] = e
+                for c in self.rawData['homes'][i]['cameras']:
+                    self.cameras[nameHome][c['id']] = c
+                    if c['type'] == 'NACamera' and 'modules' in c :
+                        for m in c['modules']:
+                            self.modules[m['id']] = m
+                            self.modules[m['id']]['cam_id'] = c['id']
+                for t in self.rawData['homes'][i]['cameras']:
+                    self.types[nameHome][t['type']] = t
         for camera in self.events:
             self.lastEvent[camera] = self.events[camera][
                 sorted(self.events[camera])[-1]]
