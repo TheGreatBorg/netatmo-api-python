@@ -15,7 +15,7 @@ import time
 
 from smart_home.WeatherStation import WeatherStationData, DeviceList
 from smart_home.Camera import CameraData
-from smart_home.Thermostat import ThermostatData
+from smart_home.Thermostat import ThermostatData, HomeData, HomeStatus
 from smart_home import _BASE_URL, postRequest, NoDevice
 
 ######################## USER SPECIFIC INFORMATION ######################
@@ -129,16 +129,10 @@ if __name__ == "__main__":
     else:
         devList.MinMaxTH()                          # Test GETMEASUR
 
-
     try:
-        Camera = CameraData(authorization)
-    except NoDevice :
-        if stdout.isatty():
-            print("lnetatmo.py : warning, no camera available for testing")
+        Thermostat = HomeData(authorization)
 
-    try:
-        Thermostat = ThermostatData(authorization)
-    except NoDevice :
+    except NoDevice:
         if stdout.isatty():
             print("lnetatmo.py : warning, no thermostat available for testing")
 
