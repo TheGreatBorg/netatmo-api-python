@@ -11,7 +11,7 @@ setup(
     author_email='philippelt@users.sourceforge.net',
     py_modules=['lnetatmo'],
     packages=['smart_home2'],
-    package_dir={'smart_home2': 'smart_home2'},
+    package_dir={'smart_home': 'smart_home'},
     scripts=[],
     data_files=[],
     url='https://github.com/philippelt/netatmo-api-python',
