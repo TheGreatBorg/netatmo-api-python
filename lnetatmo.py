@@ -130,6 +130,12 @@ if __name__ == "__main__":
         devList.MinMaxTH()                          # Test GETMEASUR
 
     try:
+        Camera = CameraData(authorization)
+    except NoDevice:
+        if stdout.isatty():
+            print("lnetatmo.py : warning, no camera available for testing")
+
+    try:
         Thermostat = HomeData(authorization)
 
     except NoDevice:
