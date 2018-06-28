@@ -13,10 +13,10 @@ coding=utf-8
 """
 import time
 
-from smart_home2.WeatherStation import WeatherStationData, DeviceList
-from smart_home2.Camera import CameraData
-from smart_home2.Thermostat import ThermostatData, HomeData, HomeStatus
-from smart_home2 import _BASE_URL, postRequest, NoDevice
+from netatmo_home.WeatherStation import WeatherStationData, DeviceList
+from netatmo_home.Camera import CameraData
+from netatmo_home.Thermostat import ThermostatData, HomeData, HomeStatus
+from netatmo_home import _BASE_URL, postRequest, NoDevice
 
 ######################## USER SPECIFIC INFORMATION ######################
 
