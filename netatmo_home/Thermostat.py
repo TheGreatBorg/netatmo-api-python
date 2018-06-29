@@ -67,38 +67,6 @@ class HomeData:
                         self.zones[nameHome][nameSchedule] = dict()
                     for z in self.rawData[i]['therm_schedules'][t]['zones']:
                         self.zones[nameHome][nameSchedule][z['id']] = z
-        # self.default_home = list(self.homes.values())[0]['name']
-        # print(self.default_home)
-        # for i in range(len(self.rawData)):
-        #     nameHome = self.rawData[i]['name']
-        #     if 'modules' in self.rawData[i]:
-        #         self.default_home = self.rawData[i]['name']
-        #         for m in self.rawData[i]['modules']:
-        #             self.modules[nameHome][m['id']] = m
-        #     if nameHome not in self.modules:
-        #         self.modules[nameHome] = dict()
-        #     if nameHome not in self.rooms:
-        #         self.rooms[nameHome] = dict()
-        #     if nameHome not in self.schedules:
-        #         self.schedules[nameHome] = dict()
-        #     if nameHome not in self.zones:
-        #         self.zones[nameHome] = dict()
-        #     if nameHome not in self.setpoint_duration:
-        #         self.setpoint_duration[nameHome] = dict()
-        #     if 'therm_setpoint_default_duration' in self.rawData[i]:
-        #         self.setpoint_duration[nameHome] = self.rawData[i]['therm_setpoint_default_duration']
-        #     if 'rooms' in self.rawData[i]:
-        #         for r in self.rawData[i]['rooms']:
-        #             self.rooms[nameHome][r['id']] = r
-        #     if 'therm_schedules' in self.rawData[i]:
-        #         for s in self.rawData[i]['therm_schedules']:
-        #             self.schedules[nameHome][s['id']] = s
-        #     for t in range(len(self.rawData[i]['therm_schedules'])):
-        #         nameSchedule = self.rawData[i]['therm_schedules'][t]['name']
-        #         if nameSchedule not in self.zones[nameHome]:
-        #             self.zones[nameHome][nameSchedule] = dict()
-        #         for z in self.rawData[i]['therm_schedules'][t]['zones']:
-        #             self.zones[nameHome][nameSchedule][z['id']] = z
 
     def homeById(self, hid):
         return None if hid not in self.homes else self.homes[hid]
@@ -186,6 +154,7 @@ class HomeStatus(HomeData):
             self.default_relay = list(self.relays.values())[0]
         if self.thermostats != {}:
             self.default_thermostat = list(self.thermostats.values())[0]
+        print(self.thermostats)
         if self.valves != {}:
             self.default_valve = list(self.valves.values())[0]
         # print(self.relays)
@@ -264,6 +233,7 @@ class HomeStatus(HomeData):
         Return the measured temperature of a given room.
         """
         temperature = None
+        print(rid)
         if rid:
             room_data = self.roomById(rid=rid)
         else:
@@ -274,6 +244,7 @@ class HomeStatus(HomeData):
 
     def boilerStatus(self, rid=None):
         boiler_status = None
+        print(rid)
         if rid:
             relay_status = self.thermostatById(rid=rid)
         else:
@@ -283,6 +254,17 @@ class HomeStatus(HomeData):
             boiler_status = relay_status['boiler_status']
         return boiler_status
 
+    def thermostatType(self, home, rid):
+        module_id = None
+        for key in self.home_data.rooms[home]:
+            if key == rid:
+                for module_id in self.home_data.rooms[home][rid]['module_ids']:
+                    self.module_id = module_id
+                    if module_id in self.thermostats:
+                        return "NATherm1"
+                    if module_id in self.valves:
+                        return "NRV"
+
     def setThermmode(self, home_id, mode):
         postParams = {
             "access_token": self.getAuthToken,
@@ -290,8 +272,9 @@ class HomeStatus(HomeData):
             "mode": mode
             }
         # print(postParams)
-        return postRequest(_SETTHERMMODE_REQ, postParams)
-        # print(resp)
+        # return postRequest(_SETTHERMMODE_REQ, postParams)
+        resp = postRequest(_SETTHERMMODE_REQ, postParams)
+        print(resp)
 
     def setroomThermpoint(self, home_id, room_id, mode, temp=None):
         postParams = {
